@@ -1,0 +1,28 @@
+services:
+  traefik:
+    image: traefik:v3.2
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "8080:8080" # Décommenter temporairement si vous voulez tester le dashboard sans HTTPS
+    extra_hosts:
+      # Permet à Traefik de joindre les services qui écoutent sur les ports de l'hôte (localhost:83, 8096, etc.)
+      - "host.docker.internal:host-gateway"
+    networks:
+      - traefik-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
+      - ./letsencrypt:/letsencrypt
+    environment:
+      - TZ=Europe/Paris
+
+networks:
+  traefik-net:
+    name: traefik-net
+    external: false

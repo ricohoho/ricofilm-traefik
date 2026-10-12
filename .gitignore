@@ -1,0 +1,4 @@
+# Fichiers de certificats et secrets
+letsencrypt/
+acme.json
+.env

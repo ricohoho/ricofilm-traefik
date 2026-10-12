@@ -1,0 +1,172 @@
+http:
+  # ==============================================================================
+  # ROUTEURS (Équivalent des blocs "server" dans Nginx)
+  # ==============================================================================
+  routers:
+    # 1. Solidage (ex: solidage.ricohoho.fr -> localhost:83)
+    solidage:
+      rule: "Host(`solidage.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      service: solidage-svc
+      tls: {}
+
+    # 2. Emby (ex: emby.ricohoho.fr -> localhost:8096)
+    emby:
+      rule: "Host(`emby.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      service: emby-svc
+      tls: {}
+
+    # 3. Jellyfin (ex: jellyfin.ricohoho.fr -> 172.19.0.2:8096)
+    jellyfin:
+      rule: "Host(`jellyfin.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      service: jellyfin-svc
+      tls: {}
+
+    # 4. Film - MCP / SSE (ex: film.ricohoho.fr/mcp/ -> localhost:3000/mcp/)
+    # Priorité plus haute (20) pour intercepter /mcp avant la règle globale
+    film-mcp:
+      rule: "Host(`film.ricohoho.fr`) && PathPrefix(`/mcp`)"
+      priority: 20
+      entryPoints:
+        - websecure
+      service: film-mcp-svc
+      tls: {}
+
+    # 4. Film - Application principale (ex: film.ricohoho.fr -> localhost:4200)
+    film:
+      rule: "Host(`film.ricohoho.fr`)"
+      priority: 10
+      entryPoints:
+        - websecure
+      service: film-svc
+      tls: {}
+
+    # 5. SAVM (ex: savm.ricohoho.fr -> localhost:81)
+    savm:
+      rule: "Host(`savm.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      service: savm-svc
+      tls: {}
+
+    # 6. Biscoto (ex: biscoto.ricohoho.fr -> localhost:82)
+    biscoto:
+      rule: "Host(`biscoto.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      service: biscoto-svc
+      tls: {}
+
+    # 7. ShareURL (ex: shareurl.ricohoho.fr -> localhost:3001 avec max 10MB)
+    shareurl:
+      rule: "Host(`shareurl.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - shareurl-body-limit
+      service: shareurl-svc
+      tls: {}
+
+    # 8. Domaine racine ricohoho.fr
+    ricohoho:
+      rule: "Host(`ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      service: ricohoho-svc
+      tls: {}
+
+    # 9. Dashboard Traefik (Optionnel mais recommandé pour monitorer vos routes)
+    # Accessible sur https://traefik.ricohoho.fr
+    traefik-dashboard:
+      rule: "Host(`traefik.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      service: api@internal
+      middlewares:
+        - auth-dashboard
+      tls: {}
+
+  # ==============================================================================
+  # MIDDLEWARES
+  # ==============================================================================
+  middlewares:
+    # Équivalent de `client_max_body_size 10M;` pour ShareURL
+    shareurl-body-limit:
+      buffering:
+        maxRequestBodyBytes: 10485760 # 10 Mo
+
+    # Authentification pour le Dashboard Traefik (admin / admin par défaut - générer avec htpasswd)
+    # Exemple pour générer votre mot de passe : htpasswd -nb user password
+    auth-dashboard:
+      basicAuth:
+        users:
+          # admin / admin (À changer impérativement !)
+          - "admin:$apr1$q8e1.b2h$O8KxP9h8jOQ3zD12/BqQ1/"
+
+  # ==============================================================================
+  # TRANSPORTS SERVEUR (Pour Server-Sent Events / SSE et flux continus)
+  # ==============================================================================
+  serversTransports:
+    sse-transport:
+      # Équivalent de proxy_read_timeout 24h
+      idleConnTimeout: 24h
+      responseHeaderTimeout: 24h
+
+  # ==============================================================================
+  # SERVICES (Cibles vers lesquelles les requêtes sont renvoyées)
+  # ==============================================================================
+  services:
+    solidage-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:83"
+
+    emby-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8096"
+
+    jellyfin-svc:
+      loadBalancer:
+        servers:
+          # Si Jellyfin tourne sur cette IP docker spécifique (comme dans votre conf nginx)
+          - url: "http://172.19.0.2:8096"
+          # Si vous exposez également Jellyfin sur l'hôte, vous pouvez utiliser :
+          # - url: "http://host.docker.internal:8096"
+
+    film-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:4200"
+
+    film-mcp-svc:
+      loadBalancer:
+        serversTransport: sse-transport
+        servers:
+          - url: "http://host.docker.internal:3000"
+
+    savm-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:81"
+
+    biscoto-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:82"
+
+    shareurl-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:3001"
+
+    ricohoho-svc:
+      loadBalancer:
+        servers:
+          # Configurez ici la cible pour le domaine racine ricohoho.fr
+          - url: "http://host.docker.internal:4200"
