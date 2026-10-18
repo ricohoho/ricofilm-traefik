@@ -1,6 +1,7 @@
 services:
   traefik:
-    image: traefik:v3.2
+    build: .
+    image: ghcr.io/ricohoho/ricofilm-traefik:latest
     container_name: traefik
     restart: unless-stopped
     security_opt:
@@ -8,21 +9,24 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      # - "8080:8080" # Décommenter temporairement si vous voulez tester le dashboard sans HTTPS
+      # - "8080:8080" # Décommenter temporairement si vous voulez tester le dashboard localement sans HTTPS
     extra_hosts:
       # Permet à Traefik de joindre les services qui écoutent sur les ports de l'hôte (localhost:83, 8096, etc.)
       - "host.docker.internal:host-gateway"
     networks:
-      - traefik-net
+      - ricofilm-network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
       - ./dynamic:/etc/traefik/dynamic:ro
-      - ./letsencrypt:/letsencrypt
+      - traefik-certificates:/letsencrypt
     environment:
       - TZ=Europe/Paris
 
+volumes:
+  traefik-certificates:
+    name: traefik-certificates
+
 networks:
-  traefik-net:
-    name: traefik-net
-    external: false
+  ricofilm-network:
+    name: ricofilm-network

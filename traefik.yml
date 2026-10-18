@@ -24,7 +24,7 @@ entryPoints:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: "admin@ricohoho.fr" # <-- REMPLACEZ par votre adresse email valide
+      email: "ricohoho@gmail.com"
       storage: "/letsencrypt/acme.json"
       httpChallenge:
         entryPoint: web
@@ -39,7 +39,7 @@ providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: "traefik-net"
+    network: "ricofilm-network"
     watch: true
 
 log:
