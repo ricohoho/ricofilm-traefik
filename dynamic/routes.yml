@@ -138,7 +138,7 @@ http:
           # Si Jellyfin tourne sur cette IP docker spécifique (comme dans votre conf nginx)
           #- url: "http://172.19.0.2:8096"
           # Si vous exposez également Jellyfin sur l'hôte, vous pouvez utiliser :
-          - url: "http://host.docker.internal:8097
+          - url: "http://host.docker.internal:8097"
 
     film-svc:
       loadBalancer:
