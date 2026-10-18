@@ -114,8 +114,9 @@ http:
   serversTransports:
     sse-transport:
       # Équivalent de proxy_read_timeout 24h
-      idleConnTimeout: 24h
-      responseHeaderTimeout: 24h
+      forwardingTimeouts:
+        idleConnTimeout: 24h
+        responseHeaderTimeout: 24h
 
   # ==============================================================================
   # SERVICES (Cibles vers lesquelles les requêtes sont renvoyées)
@@ -135,9 +136,9 @@ http:
       loadBalancer:
         servers:
           # Si Jellyfin tourne sur cette IP docker spécifique (comme dans votre conf nginx)
-          - url: "http://172.19.0.2:8096"
+          #- url: "http://172.19.0.2:8096"
           # Si vous exposez également Jellyfin sur l'hôte, vous pouvez utiliser :
-          # - url: "http://host.docker.internal:8096"
+          - url: "http://host.docker.internal:8097
 
     film-svc:
       loadBalancer:

@@ -1,4 +1,4 @@
-FROM traefik:v3.2
+FROM traefik:v3
 
 # Copie des configurations statiques et dynamiques Traefik
 COPY traefik.yml /etc/traefik/traefik.yml
