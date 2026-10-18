@@ -114,8 +114,8 @@ http:
     auth-dashboard:
       basicAuth:
         users:
-          # admin / admin (À changer impérativement !)
-          - "admin:$apr1$q8e1.b2h$O8KxP9h8jOQ3zD12/BqQ1/"
+          # admin / admin
+          - "admin:$apr1$cKh9qqj5$UwpCdQgIkEnO/Npqq.STD."
 
   # ==============================================================================
   # TRANSPORTS SERVEUR (Pour Server-Sent Events / SSE et flux continus)
