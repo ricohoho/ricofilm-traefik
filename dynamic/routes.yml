@@ -152,13 +152,15 @@ http:
     film-svc:
       loadBalancer:
         servers:
-          - url: "http://host.docker.internal:4200"
+          #- url: "http://host.docker.internal:4200"
+          - url: "http://ricofilm-frontend:80"
 
     film-mcp-svc:
       loadBalancer:
         serversTransport: sse-transport
         servers:
-          - url: "http://host.docker.internal:3000"
+          #- url: "http://host.docker.internal:3000"
+          - url: "http://ricofilm-backend:3000"
 
     savm-svc:
       loadBalancer:
