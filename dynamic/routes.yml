@@ -9,7 +9,8 @@ http:
       entryPoints:
         - websecure
       service: solidage-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 2. Emby (ex: emby.ricohoho.fr -> localhost:8096)
     emby:
@@ -17,7 +18,8 @@ http:
       entryPoints:
         - websecure
       service: emby-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 3. Jellyfin (ex: jellyfin.ricohoho.fr -> 172.19.0.2:8096)
     jellyfin:
@@ -25,7 +27,8 @@ http:
       entryPoints:
         - websecure
       service: jellyfin-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 4. Film - MCP / SSE (ex: film.ricohoho.fr/mcp/ -> localhost:3000/mcp/)
     # Priorité plus haute (20) pour intercepter /mcp avant la règle globale
@@ -35,7 +38,8 @@ http:
       entryPoints:
         - websecure
       service: film-mcp-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 4. Film - Application principale (ex: film.ricohoho.fr -> localhost:4200)
     film:
@@ -44,7 +48,8 @@ http:
       entryPoints:
         - websecure
       service: film-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 5. SAVM (ex: savm.ricohoho.fr -> localhost:81)
     savm:
@@ -52,7 +57,8 @@ http:
       entryPoints:
         - websecure
       service: savm-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 6. Biscoto (ex: biscoto.ricohoho.fr -> localhost:82)
     biscoto:
@@ -60,7 +66,8 @@ http:
       entryPoints:
         - websecure
       service: biscoto-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 7. ShareURL (ex: shareurl.ricohoho.fr -> localhost:3001 avec max 10MB)
     shareurl:
@@ -70,7 +77,8 @@ http:
       middlewares:
         - shareurl-body-limit
       service: shareurl-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
     # 8. Domaine racine ricohoho.fr
     ricohoho:
@@ -78,10 +86,10 @@ http:
       entryPoints:
         - websecure
       service: ricohoho-svc
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
-    # 9. Dashboard Traefik (Optionnel mais recommandé pour monitorer vos routes)
-    # Accessible sur https://traefik.ricohoho.fr
+    # 9. Dashboard Traefik (Optionnel - décommenter après avoir créé l'entrée DNS pour traefik.ricohoho.fr)
     traefik-dashboard:
       rule: "Host(`traefik.ricohoho.fr`)"
       entryPoints:
@@ -89,7 +97,8 @@ http:
       service: api@internal
       middlewares:
         - auth-dashboard
-      tls: {}
+      tls:
+        certResolver: letsencrypt
 
   # ==============================================================================
   # MIDDLEWARES
