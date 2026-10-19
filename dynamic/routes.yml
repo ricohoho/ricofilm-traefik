@@ -86,8 +86,6 @@ http:
       rule: "Host(`scraper.ricohoho.fr`)"
       entryPoints:
         - websecure
-      middlewares:
-        - scraper-body-limit
       service: scraper-svc
       tls:
         certResolver: letsencrypt
