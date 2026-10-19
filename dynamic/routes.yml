@@ -80,6 +80,18 @@ http:
       tls:
         certResolver: letsencrypt
 
+
+    # 7b. scraper  (ex: scraper.ricohoho.fr -> localhost:8765 avec max 10MB)
+    scraper:
+      rule: "Host(`scraper.ricohoho.fr`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - scraper-body-limit
+      service: scraper-svc
+      tls:
+        certResolver: letsencrypt
+
     # 8. Domaine racine ricohoho.fr
     ricohoho:
       rule: "Host(`ricohoho.fr`)"
@@ -175,6 +187,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://host.docker.internal:3001"
+
+    scraper-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8765"
 
     ricohoho-svc:
       loadBalancer:
