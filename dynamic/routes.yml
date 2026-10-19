@@ -191,7 +191,7 @@ http:
     scraper-svc:
       loadBalancer:
         servers:
-          - url: "http://host.docker.internal:8765"
+          - url: "http:/torrent-scraper:8765"
 
     ricohoho-svc:
       loadBalancer:
